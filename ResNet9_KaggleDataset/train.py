@@ -15,7 +15,7 @@ def get_lr(optimizer):
         return param_group['lr']
     
 
-def fit_cycles(epochs, max_lr, model, train_loader, val_loader, weight_decay=0,
+def fit_OneCycle(epochs, max_lr, model, train_loader, val_loader, weight_decay=0,
                grad_clip=None, opt_func=torch.optim.SGD):
     torch.cuda.empty_cache()
     history = []
@@ -61,12 +61,13 @@ def main():
     model = to_device(ResNet9(3, len(train_folder.classes)), device=get_device())
     print(model)
     INPUT_SHAPE = (3, 256, 256)
-    print(summary(model, (INPUT_SHAPE)))
+    print(summary(model.cuda(), (INPUT_SHAPE)))
     
     history = [evaluate(model, valid_data)]
-    epochs, max_lr, grad_clip, weight_decay, opt_func = train_config()
-    history += fit_cycles(epochs, max_lr, model, train_data, valid_data, grad_clip, weight_decay, opt_func)
     print(history)
+    epochs, max_lr, grad_clip, weight_decay, opt_func = train_config()
+    history += fit_OneCycle(epochs, max_lr, model, train_data, valid_data, grad_clip=grad_clip, weight_decay=weight_decay, opt_func=opt_func)
+    # print(history)
     
     PATH = "./ResNet9_KaggleDataset.pth"
     torch.save(model, PATH)
