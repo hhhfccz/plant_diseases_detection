@@ -23,7 +23,7 @@ class DeviceDataLoader():
 
 def config():
 	# use your own dir
-	data_dir = "/content/plant_diseases_detection/ResNet9_KaggleDataset/dataset/new plant diseases dataset(augmented)/New Plant Diseases Dataset(Augmented)"
+	data_dir = "./ResNet9_KaggleDataset/dataset/new plant diseases dataset(augmented)/New Plant Diseases Dataset(Augmented)"
 	train_dir = data_dir + "/train"
 	valid_dir = data_dir + "/valid"
 	diseases = os.listdir(train_dir)
