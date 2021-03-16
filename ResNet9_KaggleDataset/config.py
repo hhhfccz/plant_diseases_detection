@@ -23,7 +23,7 @@ class DeviceDataLoader():
 
 def config():
 	# use your own dir
-	data_dir = "./dataset/new plant diseases dataset(augmented)/New Plant Diseases Dataset(Augmented)"
+	data_dir = "/content/plant_diseases_detection/ResNet9_KaggleDataset/dataset/new plant diseases dataset(augmented)/New Plant Diseases Dataset(Augmented)"
 	train_dir = data_dir + "/train"
 	valid_dir = data_dir + "/valid"
 	diseases = os.listdir(train_dir)
@@ -76,11 +76,13 @@ def to_device(data, device):
 
 def get_data(train_dir, valid_dir, device=get_device()):
 	# you can modify these parameters
-	torch.manual_seed(118)
+	torch.manual_seed(7)
 	batch_size = 32
 
 	train = ImageFolder(train_dir, transform=transforms.ToTensor())
 	valid = ImageFolder(valid_dir, transform=transforms.ToTensor())
+	img, label = train[0]
+	print(img.shape, label)
 
 	train_data = dataloader.DataLoader(train, batch_size, shuffle=True, num_workers=2, pin_memory=True)
 	valid_data = dataloader.DataLoader(valid, batch_size, num_workers=2, pin_memory=True)
@@ -92,13 +94,14 @@ def get_data(train_dir, valid_dir, device=get_device()):
 
 
 def train_config():
-	epochs = 2
+	epochs = 5
 	max_lr = 0.01
 	grad_clip = 0.1
-	weight_decay = 1e-4
+	weight_decay = 2e-4
 	opt_func = torch.optim.Adam
 	return epochs, max_lr, grad_clip, weight_decay, opt_func
 
 
 if __name__ == '__main__':
-	pass
+	train_dir, valid_dir = config()
+	_, _, _, _ = get_data(train_dir, valid_dir)
