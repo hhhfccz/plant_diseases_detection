@@ -67,6 +67,9 @@ def main():
     epochs, max_lr, grad_clip, weight_decay, opt_func = train_config()
     history += fit_cycles(epochs, max_lr, model, train_data, valid_data, grad_clip, weight_decay, opt_func)
     print(history)
+    
+    PATH = "./ResNet9_KaggleDataset.pth"
+    torch.save(model, PATH)
 
 
 if __name__ == '__main__':
