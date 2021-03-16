@@ -13,6 +13,11 @@ from torchsummary import summary
 from config import *
 
 
+def accuracy(outputs, labels):
+    _, preds = torch.max(outputs, dim=1)
+    return torch.tensor(torch.sum(preds == labels).item() / len(preds))
+
+
 class ImageClassificationBase(nn.Module):
     def training_step(self, batch):
         images, labels = batch
@@ -39,6 +44,15 @@ class ImageClassificationBase(nn.Module):
             epoch, result['lrs'][-1], result['train_loss'], result['val_loss'], result['val_accuracy']))
 
 
+def ConvBlock(in_channels, out_channels, pool=False):
+    layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+             nn.BatchNorm2d(out_channels),
+             nn.ReLU(inplace=True)]
+    if pool:
+        layers.append(nn.MaxPool2d(4))
+    return nn.Sequential(*layers)
+
+
 class ResNet9(ImageClassificationBase):
     def __init__(self, in_channels, num_diseases):
         super().__init__()
@@ -51,9 +65,7 @@ class ResNet9(ImageClassificationBase):
         self.conv4 = ConvBlock(256, 512, pool=True)
         self.res2 = nn.Sequential(ConvBlock(512, 512), ConvBlock(512, 512))
         
-        self.classifier = nn.Sequential(nn.MaxPool2d(4),
-                                       nn.Flatten(),
-                                       nn.Linear(512, num_diseases))
+        self.classifier = nn.Sequential(nn.MaxPool2d(4), nn.Flatten(), nn.Linear(512, num_diseases))
         
     def forward(self, xb):
         out = self.conv1(xb)
@@ -66,19 +78,5 @@ class ResNet9(ImageClassificationBase):
         return out
 
 
-def ConvBlock(in_channels, out_channels, pool=False):
-    layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-             nn.BatchNorm2d(out_channels),
-             nn.ReLU(inplace=True)]
-    if pool:
-        layers.append(nn.MaxPool2d(4))
-    return nn.Sequential(*layers)
-
-
-def accuracy(outputs, labels):
-    _, preds = torch.max(outputs, dim=1)
-    return torch.tensor(torch.sum(preds == labels).item() / len(preds))
-
-
 if __name__ == '__main__':
-    pass
+    print(get_device())
