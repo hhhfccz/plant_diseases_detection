@@ -69,3 +69,13 @@ then run the train.py
 >   python train.py
 
 OK
+
+### torch to onnx
+
+if you want to deploy this model, you should turn it to `.onnx` 
+
+run torch2onnx.py
+
+>   python torch2onnx.py
+
+OK
